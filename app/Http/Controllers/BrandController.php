@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class BrandController extends Controller
 {
@@ -26,6 +27,16 @@ class BrandController extends Controller
     // function store untuk menyimpan data ke table brands
     public function store(Request $request)
     {
+
+        $validator = Validator::make($request->all(),[
+            'name' => 'required|string|min:2'
+        ]);
+
+        if ($validator->fails()) {
+            // dd($validator->errors());
+            return redirect()->back()->withErrors($validator->errors())->withInput();  //withInput ini berguna ketika kita tidak sengaja mengosongkan tabel lalu kita tekan tombol submit maka data yg lain yg sudah terisi dia tidak akan ikut ter-reset jadi masih ada di dalam tabel dg menggunakan helper OLD yg ada di viewsnya
+        }
+
         // insert data ke table brands
         $brand = Brand::create([
             'name' => $request->name,
@@ -49,6 +60,16 @@ class BrandController extends Controller
     // function update untuk mengupdate data yang sudah ada
     public function update(Request $request, $id)
     {
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|min:2'
+        ]);
+
+        if ($validator->fails()) {
+            // dd($validator->errors());
+            return redirect()->back()->withErrors($validator->errors())->withInput();  //withInput ini berguna ketika kita tidak sengaja mengosongkan tabel lalu kita tekan tombol submit maka data yg lain yg sudah terisi dia tidak akan ikut ter-reset jadi masih ada di dalam tabel dg menggunakan helper OLD yg ada di viewsnya
+        }
+
         // update data brands
         Brand::where('id', $id)->update([
             'name' => $request->name,
